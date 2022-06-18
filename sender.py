@@ -69,7 +69,7 @@ def readFromCsvAndSendEmail(csvFileName):
         for row in csv_reader:
             email, firstName, lastName = row
             print(email, firstName, lastName)
-            sendEmailTo(email, firstName, lastName)
+            sendEmailTo(email.strip(), firstName, lastName)
 
 readFromCsvAndSendEmail("SampleStudentInfo.csv  - Sheet1.csv")
 
