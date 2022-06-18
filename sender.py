@@ -1,11 +1,13 @@
 # using SendGrid's Python Library
 # https://github.com/sendgrid/sendgrid-python
 
-from distutils.command.install_egg_info import to_filename
 import os
+import base64
+import csv
+
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import From, To, Mail
+from sendgrid.helpers.mail import From, To, Mail, Attachment, FileContent, FileName, FileType, Disposition
 
 load_dotenv()
 
@@ -19,6 +21,21 @@ TEMPLATE_ID = 'd-57dfbfc5e6b7413db633c56cce560a4b'
 #     html_content='<strong>and easy to do anywhere, even with Python</strong>')
 
 
+def addEmailAttachment(fileName):
+    with open(fileName, 'rb') as f:
+        data = f.read()
+        f.close()
+    encoded_file = base64.b64encode(data).decode()
+
+    attachedFile = Attachment(
+        FileContent(encoded_file),
+        FileName(fileName),
+        FileType('application/pdf'),
+        Disposition('attachment')
+    )
+    return attachedFile
+
+
 def sendEmailTo(emailAddress, firstName, lastName):
     TO_EMAIL = To(emailAddress, "{} {}".format(firstName, lastName))
     message = Mail(
@@ -29,6 +46,11 @@ def sendEmailTo(emailAddress, firstName, lastName):
         'last_name': lastName
     }
     message.template_id = TEMPLATE_ID
+
+    # for fileName in ["Headstarter-New-Events.pdf"]:
+    #     attachment = addEmailAttachment(fileName)
+    #     message.add_attachment(attachment)
+
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sg.send(message)
@@ -38,4 +60,16 @@ def sendEmailTo(emailAddress, firstName, lastName):
     except Exception as e:
         print(e)
 
-# sendEmailTo("kevinchen3856@gmail.com", "Kevin", "Chen")
+# sendEmailTo("kevinchen3856@gmail.com", "Bob", "Something")
+# sendEmailTo("kc3585@nyu.edu", "Kevin", "Chen")
+
+def readFromCsvAndSendEmail(csvFileName):
+    with open(csvFileName) as file:
+        csv_reader = csv.reader(file, delimiter=',')
+        for row in csv_reader:
+            email, firstName, lastName = row
+            print(email, firstName, lastName)
+            sendEmailTo(email, firstName, lastName)
+
+readFromCsvAndSendEmail("SampleStudentInfo.csv  - Sheet1.csv")
+
