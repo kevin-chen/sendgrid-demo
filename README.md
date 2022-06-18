@@ -7,3 +7,8 @@ Doc: https://docs.google.com/document/d/1u1MVPgFF4w7uFEGseuycVQt6So0O81lHTY7CJa2
 ## Commands
 
 * pip install -r requirements.txt
+
+## Setup
+
+* API Key
+* Dynamic Email Template
