@@ -71,5 +71,8 @@ def readFromCsvAndSendEmail(csvFileName):
             print(email, firstName, lastName)
             sendEmailTo(email.strip(), firstName, lastName)
 
-readFromCsvAndSendEmail("SampleStudentInfo.csv  - Sheet1.csv")
+# readFromCsvAndSendEmail("SampleStudentInfo.csv  - Sheet1.csv")
+
+print(os.environ.get('SENDGRID_API_KEY'))
+
 
